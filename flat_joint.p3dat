@@ -1,0 +1,40 @@
+; fname: flat_joint.p3dat
+;
+;  Create sample with flatjoint contacts
+;==============================================================================
+restore unbonded
+
+; here we want all existing contacts to assume flat_joint properties
+contact model flatjoint 
+contact property fj_track on
+
+; bond ball-ball contacts
+contact method bond gap 2.0e-4 range contact type ball-ball
+
+; set stiffness of bonds using methods
+contact method deform emod 27.0e9 krat 1.0
+
+; set bond strengths10
+contact property fj_ten 10.0e6 fj_coh 60.0e6 fj_fa 40.0
+
+; set ball-ball friction to non-zero value
+contact property fj_fric 0.4 range contact type ball-ball
+
+; Set new ball-ball contacts to be flatjoint contacts (unbonded)
+cmat default model flatjoint ...
+    property fj_fric 0.4 fj_nal 9 fj_track on ...
+    method deform emod 27.0e9 krat 1.0 ...
+    type ball-ball
+
+; Reset ball displacement 
+ball attribute displacement multiply 0.0
+; Set the linear force to 0.0 and force a reset of the linear contact forces. 
+contact property lin_force 0.0 0.0 0.0 lin_mode 1
+ball attribute contactforce multiply 0.0 contactmoment multiply 0.0 
+cycle 1
+solve aratio 1e-5
+
+save flatjoint
+
+;==============================================================================
+; eof: flat_joint.p3dat

@@ -1,0 +1,72 @@
+; fname: ss_lateral_strain.fis
+;
+;  Fish functions to record strain using gage balls
+========================================================
+define setup_gage
+; 
+; Find gage particles to record axial strain when there are no walls
+; and set initial sample height
+;
+
+  global vertical_direction = global.dim
+  
+  ; assume x and y are approximately the same in 3D
+  local bottom_ = 1.0e12
+  local top_ = -1.0e12
+  loop foreach bp ball.list
+    top_ = math.max(ball.pos(bp,vertical_direction),top_)
+    bottom_ = math.min(ball.pos(bp,vertical_direction),bottom_)
+    left_ = math.max(ball.pos(bp,1),top_)
+    right_ = math.min(ball.pos(bp,1),bottom_)
+    front_ = math.max(ball.pos(bp,2),top_)
+    bach_ = math.min(ball.pos(bp,2),bottom_)
+  end_loop
+  if global.dim = 2
+    local top_loc = vector(0.0,top_)
+    local bottom_loc = vector(0.0,bottom_)
+  else
+    top_loc = vector(0.0,0.0,top_)
+    bottom_loc = vector(0.0,0.0,bottom_)
+    left_loc = vector(left_,0.0,0.0)
+    right_loc = vector(right_,0.0,0.0)
+    front_loc = vector(0.0,front_,0.0)
+    back_loc = vector(0.0,back_,0.0)
+  end_if
+  
+  global gage_top = ball.near(top_loc)
+  global gage_bottom = ball.near(bottom_loc)
+  global gage_left = ball.near(left_loc)
+  global gage_right = ball.near(right_loc)
+  global gage_front = ball.near(front_loc)
+  global gage_back = ball.near(back_loc)
+  global sample_height = ball.pos(gage_top,vertical_direction) - ball.pos(gage_bottom,vertical_direction)
+  global sample_width_left = ball.pos(gage_left,1) - ball.pos(gage_right,1)
+  global sample_width_front = ball.pos(gage_front,2) - ball.pos(gage_back,2)
+  
+end
+========================================================
+define axial_strain_gage
+;
+; Compute axial strain using gage balls (positive tension)
+;
+; Assumes global variables gage_top, gage_bottom and sample_height have been set
+;
+  axial_strain_gage = (ball.disp(gage_top,vertical_direction) - ball.disp(gage_bottom,vertical_direction))/sample_height
+end
+define axial_strain_gage_left
+;
+; Compute axial strain using gage balls (positive tension)
+;
+; Assumes global variables gage_top, gage_bottom and sample_height have been set
+;
+  axial_strain_gage_left = (ball.disp(gage_left,1) - ball.disp(gage_right,1))/sample_width_left
+end
+define axial_strain_gage_front
+;
+; Compute axial strain using gage balls (positive tension)
+;
+; Assumes global variables gage_top, gage_bottom and sample_height have been set
+;
+  axial_strain_gage_front = (ball.disp(gage_front,2) - ball.disp(gage_back,2))/sample_width_front
+end
+

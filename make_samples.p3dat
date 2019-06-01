@@ -12,15 +12,15 @@ cmat default model linear method deformability emod 1.0e9 kratio 0.0
 cmat default property dp_nratio 0.5
 
 ; create walls extending past the edges of the sample
-wall generate id 1 plane dip 0 dd 0   position 0 0 0.05
-wall generate id 2 plane dip 0 dd 0   position 0 0 -0.05
-wall generate id 3 plane dip 90 dd 90 position -0.025 0 0
-wall generate id 4 plane dip 90 dd 90 position 0.025 0 0
-wall generate id 5 plane dip 90 dd 0  position 0 -0.025 0
-wall generate id 6 plane dip 90 dd 0  position 0 0.025 0
+wall generate id 1 plane dip 0 dd 0   position 0 0 0.025
+wall generate id 2 plane dip 0 dd 0   position 0 0 -0.025
+wall generate id 3 plane dip 90 dd 90 position -0.0075 0 0
+wall generate id 4 plane dip 90 dd 90 position 0.0075 0 0
+wall generate id 5 plane dip 90 dd 0  position 0 -0.0075 0
+wall generate id 6 plane dip 90 dd 0  position 0 0.0075 0
 
 set random 10002
-ball distribute porosity 0.2 radius 1.0e-3 1.66e-3 box -0.025 0.025 -0.025 0.025 -0.05 0.05
+ball distribute porosity 0.2 radius 1.0e-3 1.66e-3 box -0.01 0.01 -0.03 0.03 -0.03 0.03
 ball attribute density 2500 damp 0.7
 
 ; Calm the system
@@ -37,7 +37,7 @@ calm
 wall delete walls range id 3 6
 
 ; make cylinder
-;ball delete range cylinder end1 0 0 -0.04 end2 0 0 0.04 rad 0.02 not
+ball delete range cylinder end1 -0.0075 0 0 end2 0.0075 0 0 rad 0.025 not
 
 save unbonded
 ;==============================================================================
